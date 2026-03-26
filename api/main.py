@@ -276,31 +276,3 @@ def evaluate_output(request: EvaluateRequest):
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 ```
-
----
-
-## Step 2 — Edit `requirements.txt`
-
-Open your existing `requirements.txt` → click the **pencil (edit) icon** → add these two lines at the bottom:
-```
-fastapi==0.111.0
-uvicorn==0.29.0
-```
-
-Your final `requirements.txt` will look like:
-```
-langchain==0.1.16
-langchain-openai==0.1.3
-openai==1.23.2
-sentence-transformers==2.7.0
-numpy==1.26.4
-pandas==2.2.2
-rouge-score==0.1.2
-boto3==1.34.84
-python-dotenv==1.0.1
-pytest==8.1.1
-pytest-asyncio==0.23.6
-pydantic==2.7.1
-fastapi==0.111.0
-uvicorn==0.29.0
-```
