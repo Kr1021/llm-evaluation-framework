@@ -1,0 +1,95 @@
+name: LLM Evaluation CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:    # lets you trigger it manually from the Actions tab
+
+jobs:
+  evaluate:
+    name: Run Evaluators & Upload Report
+    runs-on: ubuntu-latest
+
+    env:
+      # Set OPENAI_API_KEY in repo Settings → Secrets → Actions
+      # If not set, all evaluators automatically fall back to mock mode
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      # ---------------------------------------------------------------
+      # 1. Checkout
+      # ---------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------------
+      # 2. Python setup
+      # ---------------------------------------------------------------
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ---------------------------------------------------------------
+      # 3. Install dependencies
+      # ---------------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ---------------------------------------------------------------
+      # 4. Run pytest
+      # ---------------------------------------------------------------
+      - name: Run pytest
+        run: |
+          pytest tests/ -v --tb=short --ignore=tests/prompt_suite.yaml
+        continue-on-error: false   # fail the job if any test fails
+
+      # ---------------------------------------------------------------
+      # 5. Run CI evaluation pipeline on sample data
+      # ---------------------------------------------------------------
+      - name: Run CI evaluation pipeline
+        run: |
+          python pipelines/ci_eval_pipeline.py \
+            --input  tests/sample_eval_data.json \
+            --output outputs/ci_eval_report.json
+        continue-on-error: true    # upload report even if scores are low
+
+      # ---------------------------------------------------------------
+      # 6. Upload JSON report as workflow artifact
+      # ---------------------------------------------------------------
+      - name: Upload evaluation report
+        uses: actions/upload-artifact@v4
+        if: always()               # upload even if pipeline step failed
+        with:
+          name: eval-report-${{ github.run_number }}
+          path: outputs/ci_eval_report.json
+          retention-days: 30
+
+      # ---------------------------------------------------------------
+      # 7. Print summary to job log for quick inspection
+      # ---------------------------------------------------------------
+      - name: Print report summary
+        if: always()
+        run: |
+          if [ -f outputs/ci_eval_report.json ]; then
+            echo "===== CI Evaluation Report ====="
+            python -c "
+          import json, sys
+          with open('outputs/ci_eval_report.json') as f:
+              r = json.load(f)
+          s = r.get('summary', r)
+          print(f'Total cases   : {s.get(\"total\", \"n/a\")}')
+          print(f'Pass rate     : {s.get(\"pass_rate\", \"n/a\")}')
+          print(f'Hallucination : {s.get(\"hallucination_rate\", \"n/a\")}')
+          print(f'Avg score     : {s.get(\"avg_output_score\", \"n/a\")}')
+          print(f'Regressions   : {s.get(\"regressions\", \"n/a\")}')
+          print(f'Mode          : {s.get(\"mode\", \"mock\")}')
+            "
+          else
+            echo "Report not found — pipeline may have failed to start."
+          fi
