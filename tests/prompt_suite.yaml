@@ -1,0 +1,20 @@
+suite_name: baseline_regression_suite
+threshold: 0.70   # default for all cases unless overridden
+
+cases:
+  - id: case_001
+    prompt: "What is the claims submission deadline?"
+    expected: "Claims must be submitted within 90 days of the service date."
+    threshold: 0.75
+
+  - id: case_002
+    prompt: "Who is eligible for coverage?"
+    expected: "All full-time employees are eligible for coverage."
+
+  - id: case_003
+    prompt: "What is the appeals process?"
+    expected: "You may appeal a denied claim within 60 days by submitting a written request."
+
+  - id: case_004
+    prompt: "How do I contact support?"
+    expected: "You can contact support by calling 1-800-555-0100 or emailing support@example.com."
