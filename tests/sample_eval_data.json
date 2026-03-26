@@ -1,0 +1,37 @@
+[
+  {
+    "id": "case_001",
+    "question": "What is the claims submission deadline?",
+    "context": "Claims must be submitted within 90 days of the service date.",
+    "answer": "You must submit claims within 90 days of the service date.",
+    "ground_truth": "Claims must be submitted within 90 days of the service date."
+  },
+  {
+    "id": "case_002",
+    "question": "Who is eligible for coverage?",
+    "context": "All full-time employees working 30 or more hours per week are eligible for coverage.",
+    "answer": "Full-time employees working at least 30 hours per week are eligible.",
+    "ground_truth": "All full-time employees working 30 or more hours per week are eligible for coverage."
+  },
+  {
+    "id": "case_003",
+    "question": "What is the appeals process?",
+    "context": "You may appeal a denied claim within 60 days by submitting a written request to the appeals department.",
+    "answer": "To appeal, submit a written request to the appeals department within 60 days of the denial.",
+    "ground_truth": "You may appeal a denied claim within 60 days by submitting a written request."
+  },
+  {
+    "id": "case_004",
+    "question": "How do I contact support?",
+    "context": "Support is available Monday to Friday, 9am to 5pm EST at 1-800-555-0100.",
+    "answer": "You can reach support by calling 1-800-555-0100, available weekdays 9am to 5pm EST.",
+    "ground_truth": "Support is available Monday to Friday, 9am to 5pm EST at 1-800-555-0100."
+  },
+  {
+    "id": "case_005",
+    "question": "Is dental coverage included?",
+    "context": "The standard plan includes medical and vision coverage. Dental is available as an optional add-on.",
+    "answer": "Dental coverage is fully included in all plans at no extra cost.",
+    "ground_truth": "Dental is available as an optional add-on, not included in the standard plan."
+  }
+]
